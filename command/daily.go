@@ -11,15 +11,15 @@ type DailyCommand struct {
 	Date time.Time
 }
 
-func NewDailyCommand() cli.Command {
+func NewDailyCommand() *cli.Command {
 	srv := DailyCommand{}
 
-	return cli.Command{
+	return &cli.Command{
 		Name:    "daily",
 		Aliases: []string{"d"},
 		Usage:   "Add a daily memo",
 		Flags: []cli.Flag{
-			cli.StringFlag{
+			&cli.StringFlag{
 				Name: "date,d",
 			},
 		},
@@ -28,7 +28,7 @@ func NewDailyCommand() cli.Command {
 }
 
 func (s *DailyCommand) parseArgs(c *cli.Context) error {
-	if len(c.Args()) == 0 {
+	if c.Args().Len() == 0 {
 		// Use system date
 		s.Date = time.Now()
 	}

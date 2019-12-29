@@ -9,10 +9,10 @@ import (
 type IssueCommand struct {
 }
 
-func NewIssueCommand() cli.Command {
+func NewIssueCommand() *cli.Command {
 	srv := IssueCommand{}
 
-	return cli.Command{
+	return &cli.Command{
 		Name:    "issue",
 		Aliases: []string{"i"},
 		Usage:   "Add issue memo",
