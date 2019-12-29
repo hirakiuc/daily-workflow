@@ -2,15 +2,17 @@ package command
 
 import (
 	"fmt"
+	"time"
 
-	"github.com/urfave/cli"
+	cli "github.com/urfave/cli/v2"
 )
 
-type DailyService struct {
+type DailyCommand struct {
+	Date time.Time
 }
 
 func NewDailyCommand() cli.Command {
-	srv := DailyService{}
+	srv := DailyCommand{}
 
 	return cli.Command{
 		Name:    "daily",
@@ -25,7 +27,22 @@ func NewDailyCommand() cli.Command {
 	}
 }
 
-func (s *DailyService) Action(c *cli.Context) error {
+func (s *DailyCommand) parseArgs(c *cli.Context) error {
+	if len(c.Args()) == 0 {
+		// Use system date
+		s.Date = time.Now()
+	}
+
+	return nil
+}
+
+func (s *DailyCommand) Action(c *cli.Context) error {
+	err := s.parseArgs(c)
+	if err != nil {
+		return err
+	}
+
 	fmt.Println("Daily Action")
+
 	return nil
 }
