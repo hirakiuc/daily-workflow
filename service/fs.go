@@ -5,15 +5,18 @@ import (
 	"path/filepath"
 )
 
-type FileService struct {
+type FsService struct {
+	Root string
 }
 
-func NewFileService() *FileService {
-	return &FileService{}
+func NewFsService(root string) *FsService {
+	return &FsService{
+		Root: root,
+	}
 }
 
-func (s *FileService) Open(path string) (*os.File, error) {
-	absPath, err := filepath.Abs(path)
+func (s *FsService) Open(path string) (*os.File, error) {
+	absPath, err := filepath.Abs(filepath.Join(s.Root, path))
 	if err != nil {
 		return nil, err
 	}
@@ -22,12 +25,25 @@ func (s *FileService) Open(path string) (*os.File, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
 
 	return f, nil
 }
 
-func (s *FileService) ListFiles(root string, words []string) ([]string, error) {
+func (s *FsService) MakeDirs(path string) error {
+	absPath, err := filepath.Abs(filepath.Join(s.Root, path))
+	if err != nil {
+		return err
+	}
+
+	err = os.MkdirAll(absPath, 0777)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *FsService) ListFiles(root string, words []string) ([]string, error) {
 	founds := []string{}
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, e error) error {
