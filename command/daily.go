@@ -88,27 +88,32 @@ func (s *DailyCommand) EditAction(c *cli.Context) error {
 		return err
 	}
 
-	fs := service.NewFsService(s.Conf.Common.Root)
+	fs := service.NewFsService(s.Conf.DailyPath())
 
 	dirPath := fmt.Sprintf("%04d", s.Date.Year())
 	if err := fs.MakeDirs(dirPath); err != nil {
 		return err
 	}
 
-	absPath, err := fs.AbsPath(dirPath, fmt.Sprintf("%02d%02d.md", s.Date.Month(), s.Date.Day()))
+	fPath := s.Conf.DailyFilePath(
+		dirPath,
+		fmt.Sprintf("%02d%02d.md", s.Date.Month(), s.Date.Day()),
+	)
+
+	// Open vim with the target path.
+	cmd := service.NewCmdService()
+
+	return cmd.Exec(s.Conf.Common.Editor, fPath)
+}
+
+func (s *DailyCommand) ListAction(c *cli.Context) error {
+	err := s.parseArgs(c)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(absPath)
-	// Open vim with the target path.
-	cmd := service.NewCmdService()
+	//	fs := service.NewFsService(s.Conf.Common.Root)
 
-	return cmd.Exec(s.Conf.Common.Editor, absPath)
-}
-
-func (s *DailyCommand) ListAction(c *cli.Context) error {
-	fmt.Println("list diaries")
 	return nil
 }
 

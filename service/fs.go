@@ -30,17 +30,6 @@ func (s *FsService) MakeDirs(path string) error {
 	return nil
 }
 
-func (s *FsService) AbsPath(paths ...string) (string, error) {
-	parts := append([]string{s.Root}, paths...)
-
-	absPath, err := filepath.Abs(filepath.Join(parts...))
-	if err != nil {
-		return "", err
-	}
-
-	return absPath, nil
-}
-
 func (s *FsService) ListFiles(root string, words []string) ([]string, error) {
 	founds := []string{}
 
