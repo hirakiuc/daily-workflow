@@ -15,32 +15,30 @@ func NewFsService(root string) *FsService {
 	}
 }
 
-func (s *FsService) Open(path string) (*os.File, error) {
-	absPath, err := filepath.Abs(filepath.Join(s.Root, path))
-	if err != nil {
-		return nil, err
-	}
-
-	f, err := os.OpenFile(absPath, os.O_RDWR|os.O_CREATE, 0755)
-	if err != nil {
-		return nil, err
-	}
-
-	return f, nil
-}
-
 func (s *FsService) MakeDirs(path string) error {
-	absPath, err := filepath.Abs(filepath.Join(s.Root, path))
-	if err != nil {
-		return err
+	absPath := filepath.Join(s.Root, path)
+	if _, err := os.Stat(absPath); !os.IsNotExist(err) {
+		// Already exists
+		return nil
 	}
 
-	err = os.MkdirAll(absPath, 0777)
+	err := os.MkdirAll(absPath, 0777)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (s *FsService) AbsPath(paths ...string) (string, error) {
+	parts := append([]string{s.Root}, paths...)
+
+	absPath, err := filepath.Abs(filepath.Join(parts...))
+	if err != nil {
+		return "", err
+	}
+
+	return absPath, nil
 }
 
 func (s *FsService) ListFiles(root string, words []string) ([]string, error) {
