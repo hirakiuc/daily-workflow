@@ -16,6 +16,8 @@ type DailyCommand struct {
 	Conf *config.Config
 }
 
+const JSTDiffSeconds = 9 * 60 * 60
+
 func NewDailyCommand() *cli.Command {
 	srv := DailyCommand{}
 
@@ -23,7 +25,7 @@ func NewDailyCommand() *cli.Command {
 
 	loc, err := time.LoadLocation("Asia/Tokyo")
 	if err != nil {
-		loc = time.FixedZone("Asia/Tokyo", 9*60*60)
+		loc = time.FixedZone("Asia/Tokyo", JSTDiffSeconds)
 	}
 
 	t = t.In(loc)
