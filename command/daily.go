@@ -114,7 +114,16 @@ func (s *DailyCommand) ListAction(c *cli.Context) error {
 		return err
 	}
 
-	//	fs := service.NewFsService(s.Conf.Common.Root)
+	fs := service.NewFsService(s.Conf.Common.Root)
+
+	paths, err := fs.ListFiles(s.Conf.DailyPath())
+	if err != nil {
+		return err
+	}
+
+	for _, path := range paths {
+		fmt.Println(path)
+	}
 
 	return nil
 }

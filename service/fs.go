@@ -30,7 +30,7 @@ func (s *FsService) MakeDirs(path string) error {
 	return nil
 }
 
-func (s *FsService) ListFiles(root string, words []string) ([]string, error) {
+func (s *FsService) ListFiles(root string) ([]string, error) {
 	founds := []string{}
 
 	err := filepath.Walk(root, func(path string, info os.FileInfo, e error) error {
