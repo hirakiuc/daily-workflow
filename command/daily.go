@@ -119,9 +119,9 @@ func (s *DailyCommand) EditAction(c *cli.Context) error {
 	)
 
 	// Open vim with the target path.
-	cmd := service.NewCmdService()
+	cmd := service.NewCmdService(s.Conf)
 
-	return cmd.ExecAndWait(s.Conf.Common.Editor, fPath)
+	return cmd.EditAndWait(fPath, "")
 }
 
 func (s *DailyCommand) findCandidates(_ *cli.Context, words []string) ([]string, error) {
@@ -142,7 +142,7 @@ const CaseCandidateIsOnlyPath int = 1
 const CaseCandidateIsVimdiff int = 3
 
 func (s *DailyCommand) chooseAndEdit(_ *cli.Context, candidates []string) error {
-	srv := service.NewChooser(s.Conf)
+	srv := service.NewCmdService(s.Conf)
 
 	results, err := srv.Choose(candidates)
 	if err != nil {
@@ -166,7 +166,7 @@ func (s *DailyCommand) chooseAndEdit(_ *cli.Context, candidates []string) error 
 			opts = fmt.Sprintf("+%s", row)
 		}
 
-		srv := service.NewEditorService(s.Conf)
+		srv := service.NewCmdService(s.Conf)
 
 		return srv.EditAndWait(target, opts)
 	default:

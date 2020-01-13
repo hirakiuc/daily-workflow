@@ -3,21 +3,24 @@ package service
 import (
 	"os"
 	"os/exec"
+	"strings"
+
+	"github.com/hirakiuc/daily-workflow/config"
+	"gopkg.in/pipe.v2"
 )
 
 type CmdService struct {
+	Config *config.Config
 }
 
-type Cmd struct {
-	Command string
-	Opts    string
-}
-
-func NewCmdService() *CmdService {
-	return &CmdService{}
+func NewCmdService(conf *config.Config) *CmdService {
+	return &CmdService{
+		Config: conf,
+	}
 }
 
 func (s *CmdService) ExecAndWait(name string, args ...string) error {
+	// nolint:gosec
 	cmd := exec.Command(name, args...)
 
 	cmd.Stdin = os.Stdin
@@ -32,4 +35,26 @@ func (s *CmdService) ExecAndWait(name string, args ...string) error {
 	}
 
 	return cmd.Wait()
+}
+
+func (s *CmdService) EditAndWait(fpath string, opts string) error {
+	return s.ExecAndWait(
+		s.Config.Common.Editor,
+		fpath,
+		opts,
+	)
+}
+
+func (s *CmdService) Choose(candidates []string) ([]string, error) {
+	p := pipe.Line(
+		pipe.Print(strings.Join(candidates, "\n")),
+		pipe.Exec(s.Config.Common.Chooser, s.Config.Common.ChooserOpts),
+	)
+
+	output, err := pipe.CombinedOutput(p)
+	if err != nil {
+		return []string{}, err
+	}
+
+	return strings.Split(string(output), "\n"), nil
 }
