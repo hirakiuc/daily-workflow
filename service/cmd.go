@@ -8,11 +8,16 @@ import (
 type CmdService struct {
 }
 
+type Cmd struct {
+	Command string
+	Opts    string
+}
+
 func NewCmdService() *CmdService {
 	return &CmdService{}
 }
 
-func (s *CmdService) Exec(name string, args ...string) error {
+func (s *CmdService) ExecAndWait(name string, args ...string) error {
 	cmd := exec.Command(name, args...)
 
 	cmd.Stdin = os.Stdin

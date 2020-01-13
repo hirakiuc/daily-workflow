@@ -1,8 +1,11 @@
 package service
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 type FsService struct {
@@ -59,4 +62,25 @@ func (s *FsService) ListFiles(root string) ([]string, error) {
 	}
 
 	return founds, nil
+}
+
+func (s *FsService) FindFiles(finder string, finderOpts string, word string) ([]string, error) {
+	// exec ag with words
+	cmd := exec.Command(
+		finder,
+		finderOpts,
+		word,
+		s.Root,
+	)
+
+	fmt.Println(cmd.String())
+
+	bytes, err := cmd.Output()
+	if err != nil {
+		return []string{}, err
+	}
+
+	outputs := strings.TrimRight(string(bytes), "\n")
+
+	return strings.Split(outputs, "\n"), nil
 }

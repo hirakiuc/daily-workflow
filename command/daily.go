@@ -2,6 +2,7 @@ package command
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/hirakiuc/daily-workflow/config"
@@ -37,9 +38,10 @@ func NewDailyCommand() *cli.Command {
 		Usage:   "Add a daily memo",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name: "date,d", Aliases: []string{"d"},
-				Value: today,
-				Usage: "yyyy-mmdd",
+				Name:    "date,d",
+				Aliases: []string{"d"},
+				Value:   today,
+				Usage:   "yyyy-mmdd",
 			},
 		},
 		Subcommands: makeSubCommands(srv),
@@ -57,11 +59,25 @@ func makeSubCommands(srv DailyCommand) []*cli.Command {
 			Name:   "list",
 			Usage:  "list daily reports",
 			Action: srv.ListAction,
+			Flags: []cli.Flag{
+				&cli.BoolFlag{
+					Name:    "edit,e",
+					Aliases: []string{"e"},
+					Value:   false,
+				},
+			},
 		},
 		{
 			Name:   "find",
 			Usage:  "find daily reports",
 			Action: srv.FindAction,
+			Flags: []cli.Flag{
+				&cli.BoolFlag{
+					Name:    "edit",
+					Aliases: []string{"e"},
+					Value:   false,
+				},
+			},
 		},
 	}
 }
@@ -105,7 +121,57 @@ func (s *DailyCommand) EditAction(c *cli.Context) error {
 	// Open vim with the target path.
 	cmd := service.NewCmdService()
 
-	return cmd.Exec(s.Conf.Common.Editor, fPath)
+	return cmd.ExecAndWait(s.Conf.Common.Editor, fPath)
+}
+
+func (s *DailyCommand) findCandidates(_ *cli.Context, words []string) ([]string, error) {
+	fs := service.NewFsService(s.Conf.Common.Root)
+
+	if len(words) == 0 {
+		return fs.ListFiles(s.Conf.DailyPath())
+	}
+
+	return fs.FindFiles(
+		s.Conf.Common.Finder,
+		s.Conf.Common.FinderOpts,
+		strings.Join(words, " "),
+	)
+}
+
+const CaseCandidateIsOnlyPath int = 1
+const CaseCandidateIsVimdiff int = 3
+
+func (s *DailyCommand) chooseAndEdit(_ *cli.Context, candidates []string) error {
+	srv := service.NewChooser(s.Conf)
+
+	results, err := srv.Choose(candidates)
+	if err != nil {
+		return err
+	}
+
+	switch len(results) {
+	case 0:
+		return nil
+	case CaseCandidateIsOnlyPath:
+		target := results[0]
+		opts := ""
+
+		parts := strings.Split(target, ":")
+
+		if len(parts) == CaseCandidateIsVimdiff {
+			target = parts[0]
+			row := parts[1]
+			// col := parts[2]
+
+			opts = fmt.Sprintf("+%s", row)
+		}
+
+		srv := service.NewEditorService(s.Conf)
+
+		return srv.EditAndWait(target, opts)
+	default:
+		return fmt.Errorf("unsupported case: can't select multiple items")
+	}
 }
 
 func (s *DailyCommand) ListAction(c *cli.Context) error {
@@ -114,11 +180,13 @@ func (s *DailyCommand) ListAction(c *cli.Context) error {
 		return err
 	}
 
-	fs := service.NewFsService(s.Conf.Common.Root)
-
-	paths, err := fs.ListFiles(s.Conf.DailyPath())
+	paths, err := s.findCandidates(c, []string{})
 	if err != nil {
 		return err
+	}
+
+	if c.Bool("e") {
+		return s.chooseAndEdit(c, paths)
 	}
 
 	for _, path := range paths {
@@ -129,6 +197,27 @@ func (s *DailyCommand) ListAction(c *cli.Context) error {
 }
 
 func (s *DailyCommand) FindAction(c *cli.Context) error {
-	fmt.Println("find diaries")
+	if err := s.parseArgs(c); err != nil {
+		return err
+	}
+
+	candidates, err := s.findCandidates(c, c.Args().Slice())
+	if err != nil {
+		fmt.Println("find failure")
+		return err
+	}
+
+	if len(candidates) == 0 {
+		return nil
+	}
+
+	if c.Bool("e") {
+		return s.chooseAndEdit(c, candidates)
+	}
+
+	for _, v := range candidates {
+		fmt.Println(v)
+	}
+
 	return nil
 }
