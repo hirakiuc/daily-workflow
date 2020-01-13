@@ -23,7 +23,7 @@ func NewChooser(conf *config.Config) *Chooser {
 func (s *Chooser) Choose(candidates []string) ([]string, error) {
 	p := pipe.Line(
 		pipe.Print(strings.Join(candidates, "\n")),
-		//		pipe.Exec(s.Chooser, s.ChooserOpts),
+		pipe.Exec(s.Chooser, s.ChooserOpts),
 	)
 
 	output, err := pipe.CombinedOutput(p)
