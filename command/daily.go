@@ -140,6 +140,7 @@ func (s *DailyCommand) findCandidates(_ *cli.Context, words []string) ([]string,
 
 const CaseCandidateIsOnlyPath int = 1
 const CaseCandidateIsVimdiff int = 3
+const OnlyOneItem int = 1
 
 func (s *DailyCommand) chooseAndEdit(_ *cli.Context, candidates []string) error {
 	srv := service.NewCmdService(s.Conf)
@@ -149,29 +150,29 @@ func (s *DailyCommand) chooseAndEdit(_ *cli.Context, candidates []string) error 
 		return err
 	}
 
-	switch len(results) {
-	case 0:
+	for _, path := range results {
+		fmt.Println(path)
+	}
+
+	if len(results) == 0 {
 		return nil
-	case CaseCandidateIsOnlyPath:
-		target := results[0]
-		opts := ""
-
-		parts := strings.Split(target, ":")
-
-		if len(parts) == CaseCandidateIsVimdiff {
-			target = parts[0]
-			row := parts[1]
-			// col := parts[2]
-
-			opts = fmt.Sprintf("+%s", row)
-		}
-
-		srv := service.NewCmdService(s.Conf)
-
-		return srv.EditAndWait(target, opts)
-	default:
+	} else if len(results) > OnlyOneItem {
 		return fmt.Errorf("unsupported case: can't select multiple items")
 	}
+
+	target := results[0]
+	opts := ""
+
+	parts := strings.Split(target, ":")
+	if len(parts) > CaseCandidateIsVimdiff {
+		target = parts[0]
+		row := parts[1]
+		// col := parts[2]
+
+		opts = fmt.Sprintf("+%s", row)
+	}
+
+	return srv.EditAndWait(target, opts)
 }
 
 func (s *DailyCommand) ListAction(c *cli.Context) error {

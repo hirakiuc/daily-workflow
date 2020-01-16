@@ -47,8 +47,8 @@ func (s *CmdService) EditAndWait(fpath string, opts string) error {
 
 func (s *CmdService) Choose(candidates []string) ([]string, error) {
 	p := pipe.Line(
-		pipe.Print(strings.Join(candidates, "\n")),
-		pipe.Exec(s.Config.Common.Chooser, s.Config.Common.ChooserOpts),
+		pipe.Print(strings.Join(candidates, "\n")+"\n"),
+		pipe.Exec(s.Config.Common.Chooser), //, s.Config.Common.ChooserOpts),
 	)
 
 	output, err := pipe.CombinedOutput(p)
@@ -56,5 +56,7 @@ func (s *CmdService) Choose(candidates []string) ([]string, error) {
 		return []string{}, err
 	}
 
-	return strings.Split(string(output), "\n"), nil
+	lines := strings.TrimRight(string(output), "\n")
+
+	return strings.Split(lines, "\n"), nil
 }
