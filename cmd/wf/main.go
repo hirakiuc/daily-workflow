@@ -17,7 +17,7 @@ func main() {
 			&cli.StringFlag{
 				Name:    "config",
 				Aliases: []string{"c"},
-				Value:   "./config.toml",
+				Value:   "~/.config/wf/config.toml",
 			},
 		},
 	}
