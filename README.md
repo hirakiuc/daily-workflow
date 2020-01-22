@@ -1,7 +1,26 @@
+# daily-workflow
 
-# Directory Structure
+Daily works
 
-- daily/yyyy/mm/dd.md
-- estimate/topic-xxx.md
-- issue/MJP-xxx.md
+- daily report
 
+## Configuration
+
+default path: `~/.config/wf/config.toml`
+
+```
+[common]
+root = "~/Desktop/workspace/tool"
+editor = "nvim"
+finder = "ag"
+finderOpts = "--vimgrep"
+chooser = "/usr/local/bin/peco"
+chooserOpts = "--promot '>'"
+
+[daily]
+path = "daily"
+```
+
+## Directory Structure
+
+- {root}/daily/yyyy/mm/dd.md
