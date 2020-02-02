@@ -24,7 +24,7 @@ func main() {
 
 	app.Commands = []*cli.Command{
 		command.NewDailyCommand(),
-		command.NewIssueCommand(),
+		command.NewJiraCommand(),
 	}
 
 	err := app.Run(os.Args)

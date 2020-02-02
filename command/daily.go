@@ -44,11 +44,11 @@ func NewDailyCommand() *cli.Command {
 				Usage:   "yyyy-mmdd",
 			},
 		},
-		Subcommands: makeSubCommands(srv),
+		Subcommands: makeDailySubCommands(srv),
 	}
 }
 
-func makeSubCommands(srv DailyCommand) []*cli.Command {
+func makeDailySubCommands(srv DailyCommand) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:   "edit",
