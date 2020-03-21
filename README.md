@@ -1,5 +1,8 @@
 # daily-workflow
 
+![Go](https://github.com/hirakiuc/daily-workflow/workflows/Go/badge.svg?branch=master)
+[![codecov](https://codecov.io/gh/hirakiuc/daily-workflow/branch/master/graph/badge.svg)](https://codecov.io/gh/hirakiuc/daily-workflow)
+
 Daily works
 
 - daily report
