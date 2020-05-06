@@ -19,6 +19,8 @@ type DailyCommand struct {
 
 const JSTDiffSeconds = 9 * 60 * 60
 
+var ErrUnsupportedCase = errors.New("unsupported case: can't select multiple items")
+
 func NewDailyCommand() *cli.Command {
 	srv := DailyCommand{}
 
@@ -157,7 +159,7 @@ func (s *DailyCommand) chooseAndEdit(_ *cli.Context, candidates []string) error 
 	if len(results) == 0 {
 		return nil
 	} else if len(results) > OnlyOneItem {
-		return fmt.Errorf("unsupported case: can't select multiple items")
+		return fmt.Errorf("%w", ErrUnsupportedCase)
 	}
 
 	target := results[0]
