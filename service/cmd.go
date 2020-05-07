@@ -28,7 +28,6 @@ func (s *CmdService) ExecAndWait(name string, args ...string) error {
 		}
 	}
 
-	// nolint:gosec
 	cmd := exec.Command(name, opts...)
 
 	cmd.Stdin = os.Stdin
