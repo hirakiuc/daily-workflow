@@ -18,7 +18,6 @@ editor = "nvim"
 finder = "ag"
 finderOpts = "--vimgrep"
 chooser = "/usr/local/bin/peco"
-chooserOpts = "--promot '>'"
 
 [daily]
 path = "daily"
