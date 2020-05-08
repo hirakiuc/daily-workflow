@@ -14,12 +14,11 @@ type Config struct {
 }
 
 type Common struct {
-	Root        string `toml:"root"`
-	Editor      string `toml:"editor"`
-	Finder      string `toml:"finder"`
-	FinderOpts  string `toml:"finderOpts"`
-	Chooser     string `toml:"chooser"`
-	ChooserOpts string `toml:"chooserOpts"`
+	Root       string `toml:"root"`
+	Editor     string `toml:"editor"`
+	Finder     string `toml:"finder"`
+	FinderOpts string `toml:"finderOpts"`
+	Chooser    string `toml:"chooser"`
 }
 
 type Daily struct {

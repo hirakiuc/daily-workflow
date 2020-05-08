@@ -53,21 +53,9 @@ func (s *CmdService) EditAndWait(fpath string, opts string) error {
 }
 
 func (s *CmdService) Choose(candidates []string) ([]string, error) {
-	var chooserPipe pipe.Pipe
-	if len(s.Config.Common.ChooserOpts) > 0 {
-		chooserPipe = pipe.Exec(
-			s.Config.Common.Chooser,
-			s.Config.Common.ChooserOpts,
-		)
-	} else {
-		chooserPipe = pipe.Exec(
-			s.Config.Common.Chooser,
-		)
-	}
-
 	p := pipe.Line(
-		pipe.Print(strings.Join(candidates, "\n")+"\n"),
-		chooserPipe,
+		pipe.Println(strings.Join(candidates, "\n")),
+		pipe.Exec(s.Config.Common.Chooser),
 	)
 
 	output, err := pipe.CombinedOutput(p)
