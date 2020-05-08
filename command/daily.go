@@ -11,15 +11,15 @@ import (
 	cli "github.com/urfave/cli/v2"
 )
 
+const JSTDiffSeconds = 9 * 60 * 60
+
+var ErrUnsupportedCase = errors.New("unsupported case: can't select multiple items")
+
 type DailyCommand struct {
 	Date time.Time
 
 	Conf *config.Config
 }
-
-const JSTDiffSeconds = 9 * 60 * 60
-
-var ErrUnsupportedCase = errors.New("unsupported case: can't select multiple items")
 
 func NewDailyCommand() *cli.Command {
 	srv := DailyCommand{}
@@ -78,6 +78,11 @@ func makeDailySubCommands(srv DailyCommand) []*cli.Command {
 					Name:    "edit",
 					Aliases: []string{"e"},
 					Value:   false,
+				},
+				&cli.StringFlag{
+					Name:    "path",
+					Aliases: []string{"p"},
+					Value:   "",
 				},
 			},
 		},
@@ -204,10 +209,24 @@ func (s *DailyCommand) FindAction(c *cli.Context) error {
 		return err
 	}
 
-	candidates, err := s.findCandidates(c, c.Args().Slice())
+	founds, err := s.findCandidates(c, c.Args().Slice())
 	if err != nil {
 		fmt.Println("find failure")
 		return err
+	}
+
+	candidates := []string{}
+
+	if len(c.String("path")) > 0 {
+		pathKey := c.String("path")
+
+		for _, path := range founds {
+			if strings.Contains(path, pathKey) {
+				candidates = append(candidates, path)
+			}
+		}
+	} else {
+		candidates = founds
 	}
 
 	if len(candidates) == 0 {
