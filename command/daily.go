@@ -212,6 +212,7 @@ func (s *DailyCommand) FindAction(c *cli.Context) error {
 	founds, err := s.findCandidates(c, c.Args().Slice())
 	if err != nil {
 		fmt.Println("find failure")
+
 		return err
 	}
 
