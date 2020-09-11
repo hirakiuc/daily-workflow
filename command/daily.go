@@ -145,9 +145,11 @@ func (s *DailyCommand) findCandidates(_ *cli.Context, words []string) ([]string,
 	)
 }
 
-const CaseCandidateIsOnlyPath int = 1
-const CaseCandidateIsVimdiff int = 3
-const OnlyOneItem int = 1
+const (
+	CaseCandidateIsOnlyPath int = 1
+	CaseCandidateIsVimdiff  int = 3
+	OnlyOneItem             int = 1
+)
 
 func (s *DailyCommand) chooseAndEdit(_ *cli.Context, candidates []string) error {
 	srv := service.NewCmdService(s.Conf)
@@ -212,6 +214,7 @@ func (s *DailyCommand) FindAction(c *cli.Context) error {
 	founds, err := s.findCandidates(c, c.Args().Slice())
 	if err != nil {
 		fmt.Println("find failure")
+
 		return err
 	}
 

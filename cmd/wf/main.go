@@ -30,6 +30,7 @@ func main() {
 	err := app.Run(os.Args)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
+
 		return
 	}
 }

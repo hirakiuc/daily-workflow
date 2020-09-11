@@ -55,6 +55,7 @@ func (s *FsService) ListFiles(root string) ([]string, error) {
 		}
 
 		founds = append(founds, path)
+
 		return nil
 	})
 	if err != nil {

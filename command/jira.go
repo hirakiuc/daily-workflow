@@ -23,11 +23,20 @@ func makeJiraSubCommands(srv JiraCommand) []*cli.Command {
 		{
 			Name:   "issues",
 			Usage:  "Show issues",
-			Action: srv.ShowIssueAction,
+			Action: srv.ShowIssuesAction,
+		},
+		{
+			Name:   "boards",
+			Usage:  "Show boards",
+			Action: srv.ShowBoardsAction,
 		},
 	}
 }
 
-func (s *JiraCommand) ShowIssueAction(c *cli.Context) error {
+func (s *JiraCommand) ShowIssuesAction(c *cli.Context) error {
+	return nil
+}
+
+func (s *JiraCommand) ShowBoardsAction(c *cli.Context) error {
 	return nil
 }
