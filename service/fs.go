@@ -27,7 +27,7 @@ func (s *FsService) MakeDirs(path string) error {
 
 	err := os.MkdirAll(absPath, 0777)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to mkdir 0777: %w", err)
 	}
 
 	return nil
@@ -43,7 +43,7 @@ func (s *FsService) ListFiles(root string) ([]string, error) {
 
 		rel, err := filepath.Rel(root, path)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to get a relative path: %w", err)
 		}
 
 		if rel == "." {
@@ -59,7 +59,7 @@ func (s *FsService) ListFiles(root string) ([]string, error) {
 		return nil
 	})
 	if err != nil {
-		return []string{}, err
+		return []string{}, fmt.Errorf("failed to recuesively scan the directory: %w", err)
 	}
 
 	return founds, nil
@@ -78,7 +78,7 @@ func (s *FsService) FindFiles(finder string, finderOpts string, word string) ([]
 
 	bytes, err := cmd.Output()
 	if err != nil {
-		return []string{}, err
+		return []string{}, fmt.Errorf("failed to get the output: %w", err)
 	}
 
 	outputs := strings.TrimRight(string(bytes), "\n")

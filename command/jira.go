@@ -4,8 +4,7 @@ import (
 	cli "github.com/urfave/cli/v2"
 )
 
-type JiraCommand struct {
-}
+type JiraCommand struct{}
 
 func NewJiraCommand() *cli.Command {
 	srv := JiraCommand{}
