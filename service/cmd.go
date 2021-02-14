@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"strings"
@@ -38,7 +39,7 @@ func (s *CmdService) ExecAndWait(name string, args ...string) error {
 
 	err := cmd.Start()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to execute command: %w", err)
 	}
 
 	return cmd.Wait()
@@ -60,7 +61,7 @@ func (s *CmdService) Choose(candidates []string) ([]string, error) {
 
 	output, err := pipe.CombinedOutput(p)
 	if err != nil {
-		return []string{}, err
+		return []string{}, fmt.Errorf("failed to extract output: %w", err)
 	}
 
 	lines := strings.TrimRight(string(output), "\n")

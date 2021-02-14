@@ -92,7 +92,7 @@ func makeDailySubCommands(srv DailyCommand) []*cli.Command {
 func (s *DailyCommand) parseArgs(c *cli.Context) error {
 	conf, err := config.LoadConfig("./config.toml")
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to load config file: %w", err)
 	}
 
 	s.Conf = conf
@@ -117,7 +117,7 @@ func (s *DailyCommand) EditAction(c *cli.Context) error {
 
 	dirPath := fmt.Sprintf("%04d", s.Date.Year())
 	if err := fs.MakeDirs(dirPath); err != nil {
-		return err
+		return fmt.Errorf("failed to create directories: %w", err)
 	}
 
 	fPath := s.Conf.DailyFilePath(
@@ -156,7 +156,7 @@ func (s *DailyCommand) chooseAndEdit(_ *cli.Context, candidates []string) error 
 
 	results, err := srv.Choose(candidates)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to choose target: %w", err)
 	}
 
 	for _, path := range results {
@@ -215,7 +215,7 @@ func (s *DailyCommand) FindAction(c *cli.Context) error {
 	if err != nil {
 		fmt.Println("find failure")
 
-		return err
+		return fmt.Errorf("failed to find candidates: %w", err)
 	}
 
 	candidates := []string{}

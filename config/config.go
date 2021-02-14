@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"os/user"
 	"path/filepath"
 	"strings"
@@ -29,7 +30,7 @@ type Daily struct {
 func LoadConfig(path string) (*Config, error) {
 	var config Config
 	if _, err := toml.DecodeFile(path, &config); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to parse toml file: %w", err)
 	}
 
 	var err error
@@ -52,7 +53,7 @@ func expandPath(path string) (string, error) {
 
 	user, err := user.Current()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to get current user: %w", err)
 	}
 
 	return strings.Replace(path, "~", user.HomeDir, 1), nil
