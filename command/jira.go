@@ -8,9 +8,9 @@ type JiraCommand struct {
 	*Base
 }
 
-func NewJiraCommand() *cli.Command {
+func NewJiraCommand(iostream *IoStream) *cli.Command {
 	srv := JiraCommand{
-		Base: NewBase(),
+		Base: NewBase(iostream),
 	}
 
 	return &cli.Command{

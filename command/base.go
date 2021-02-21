@@ -2,8 +2,6 @@ package command
 
 import (
 	"fmt"
-	"io"
-	"os"
 
 	"github.com/hirakiuc/daily-workflow/config"
 )
@@ -11,16 +9,14 @@ import (
 type Base struct {
 	Conf *config.Config
 
-	Stdout io.Writer
-	Stderr io.Writer
+	IO *IoStream
 }
 
-func NewBase() *Base {
+func NewBase(stream *IoStream) *Base {
 	return &Base{
 		Conf: nil,
 
-		Stdout: os.Stdout,
-		Stderr: os.Stderr,
+		IO: stream,
 	}
 }
 
@@ -35,10 +31,10 @@ func (b *Base) LoadConfig(path string) error {
 	return nil
 }
 
-func (b *Base) Output(msg string, a ...interface{}) {
-	fmt.Fprintf(b.Stdout, msg, a...)
+func (b *Base) Out() *Printer {
+	return b.IO.Out
 }
 
-func (b *Base) Err(msg string, a ...interface{}) {
-	fmt.Fprintf(b.Stderr, msg, a...)
+func (b *Base) Err() *Printer {
+	return b.IO.Err
 }

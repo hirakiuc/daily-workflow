@@ -20,9 +20,9 @@ type DailyCommand struct {
 	*Base
 }
 
-func NewDailyCommand() *cli.Command {
+func NewDailyCommand(iostream *IoStream) *cli.Command {
 	srv := DailyCommand{
-		Base: NewBase(),
+		Base: NewBase(iostream),
 	}
 
 	t := time.Now()
@@ -159,7 +159,7 @@ func (s *DailyCommand) chooseAndEdit(_ *cli.Context, candidates []string) error 
 	}
 
 	for _, path := range results {
-		fmt.Println(path)
+		s.Out().Println(path)
 	}
 
 	if len(results) == 0 {
@@ -199,7 +199,7 @@ func (s *DailyCommand) ListAction(c *cli.Context) error {
 	}
 
 	for _, path := range paths {
-		fmt.Println(path)
+		s.Out().Println(path)
 	}
 
 	return nil
@@ -212,7 +212,7 @@ func (s *DailyCommand) FindAction(c *cli.Context) error {
 
 	founds, err := s.findCandidates(c, c.Args().Slice())
 	if err != nil {
-		fmt.Println("find failure")
+		s.Out().Println("find failure")
 
 		return fmt.Errorf("failed to find candidates: %w", err)
 	}
@@ -240,7 +240,7 @@ func (s *DailyCommand) FindAction(c *cli.Context) error {
 	}
 
 	for _, v := range candidates {
-		fmt.Println(v)
+		s.Out().Println(v)
 	}
 
 	return nil
