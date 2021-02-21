@@ -74,6 +74,7 @@ func (s *FsService) FindFiles(finder string, finderOpts string, word string) ([]
 		s.Root,
 	)
 
+	// nolint:forbidigo
 	fmt.Println(cmd.String())
 
 	bytes, err := cmd.Output()

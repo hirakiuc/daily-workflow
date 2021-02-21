@@ -4,10 +4,14 @@ import (
 	cli "github.com/urfave/cli/v2"
 )
 
-type JiraCommand struct{}
+type JiraCommand struct {
+	*Base
+}
 
-func NewJiraCommand() *cli.Command {
-	srv := JiraCommand{}
+func NewJiraCommand(iostream *IoStream) *cli.Command {
+	srv := JiraCommand{
+		Base: NewBase(iostream),
+	}
 
 	return &cli.Command{
 		Name:        "jira",
@@ -32,10 +36,29 @@ func makeJiraSubCommands(srv JiraCommand) []*cli.Command {
 	}
 }
 
+func (s *JiraCommand) parseArgs(_ *cli.Context) error {
+	err := s.LoadConfig("./config.toml")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *JiraCommand) ShowIssuesAction(c *cli.Context) error {
+	err := s.parseArgs(c)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (s *JiraCommand) ShowBoardsAction(c *cli.Context) error {
+	err := s.parseArgs(c)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

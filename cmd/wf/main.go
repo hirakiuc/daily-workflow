@@ -22,13 +22,14 @@ func main() {
 		},
 	}
 
+	iostream := command.NewIoStream()
+
 	app.Commands = []*cli.Command{
-		command.NewDailyCommand(),
-		command.NewJiraCommand(),
+		command.NewDailyCommand(iostream),
+		command.NewJiraCommand(iostream),
 	}
 
-	err := app.Run(os.Args)
-	if err != nil {
+	if err := app.Run(os.Args); err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 
 		return

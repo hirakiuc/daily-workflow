@@ -5,7 +5,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/hirakiuc/daily-workflow/config"
 	"github.com/hirakiuc/daily-workflow/service"
 	"github.com/pkg/errors"
 	cli "github.com/urfave/cli/v2"
@@ -18,11 +17,13 @@ var ErrUnsupportedCase = errors.New("unsupported case: can't select multiple ite
 type DailyCommand struct {
 	Date time.Time
 
-	Conf *config.Config
+	*Base
 }
 
-func NewDailyCommand() *cli.Command {
-	srv := DailyCommand{}
+func NewDailyCommand(iostream *IoStream) *cli.Command {
+	srv := DailyCommand{
+		Base: NewBase(iostream),
+	}
 
 	t := time.Now()
 
@@ -90,12 +91,10 @@ func makeDailySubCommands(srv DailyCommand) []*cli.Command {
 }
 
 func (s *DailyCommand) parseArgs(c *cli.Context) error {
-	conf, err := config.LoadConfig("./config.toml")
+	err := s.LoadConfig("./config.toml")
 	if err != nil {
-		return fmt.Errorf("failed to load config file: %w", err)
+		return err
 	}
-
-	s.Conf = conf
 
 	d := c.String("date")
 
@@ -160,7 +159,7 @@ func (s *DailyCommand) chooseAndEdit(_ *cli.Context, candidates []string) error 
 	}
 
 	for _, path := range results {
-		fmt.Println(path)
+		s.Out().Println(path)
 	}
 
 	if len(results) == 0 {
@@ -200,7 +199,7 @@ func (s *DailyCommand) ListAction(c *cli.Context) error {
 	}
 
 	for _, path := range paths {
-		fmt.Println(path)
+		s.Out().Println(path)
 	}
 
 	return nil
@@ -213,7 +212,7 @@ func (s *DailyCommand) FindAction(c *cli.Context) error {
 
 	founds, err := s.findCandidates(c, c.Args().Slice())
 	if err != nil {
-		fmt.Println("find failure")
+		s.Out().Println("find failure")
 
 		return fmt.Errorf("failed to find candidates: %w", err)
 	}
@@ -241,7 +240,7 @@ func (s *DailyCommand) FindAction(c *cli.Context) error {
 	}
 
 	for _, v := range candidates {
-		fmt.Println(v)
+		s.Out().Println(v)
 	}
 
 	return nil
