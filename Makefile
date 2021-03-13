@@ -25,7 +25,7 @@ install:
 	go install
 
 check:
-	golangci-lint run --enable-all -D dupl,exhaustivestruct ./...
+	golangci-lint run -c .golangci.yml
 
 clean:
 	go clean ./cmd/wf/main.go
