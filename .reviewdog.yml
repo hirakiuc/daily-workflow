@@ -26,7 +26,7 @@ runner:
     format: golint
     level: warning
   golangci:
-    cmd: golangci-lint run -D dupl,exhaustivestruct,forbidigo --out-format=line-number ./...
+    cmd: golangci-lint run -c .golangci.yml --out-format=line-number
     errorformat:
       - '%E%f:%l:%c: %m'
       - '%E%f:%l: %m'
