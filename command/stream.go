@@ -7,7 +7,7 @@ import (
 )
 
 type Printer struct {
-	Out io.Writer
+	out io.Writer
 }
 
 type IoStream struct {
@@ -17,20 +17,20 @@ type IoStream struct {
 
 func NewPrinter(out io.Writer) *Printer {
 	return &Printer{
-		Out: out,
+		out: out,
 	}
 }
 
 func (p *Printer) Print(a ...interface{}) {
-	fmt.Fprint(p.Out, a...)
+	fmt.Fprint(p.out, a...)
 }
 
 func (p *Printer) Println(a ...interface{}) {
-	fmt.Fprintln(p.Out, a...)
+	fmt.Fprintln(p.out, a...)
 }
 
 func (p *Printer) Printf(format string, a ...interface{}) {
-	fmt.Fprintf(p.Out, format, a...)
+	fmt.Fprintf(p.out, format, a...)
 }
 
 func NewIoStream() *IoStream {
