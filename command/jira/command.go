@@ -1,16 +1,18 @@
-package command
+package jira
 
 import (
+	base "github.com/hirakiuc/daily-workflow/command"
+	"github.com/pkg/errors"
 	cli "github.com/urfave/cli/v2"
 )
 
-type JiraCommand struct {
-	*Base
+type Command struct {
+	*base.Base
 }
 
-func NewJiraCommand(iostream *IoStream) *cli.Command {
-	srv := JiraCommand{
-		Base: NewBase(iostream),
+func NewCommand(iostream *base.IoStream) *cli.Command {
+	srv := Command{
+		Base: base.NewBase(iostream),
 	}
 
 	return &cli.Command{
@@ -21,7 +23,7 @@ func NewJiraCommand(iostream *IoStream) *cli.Command {
 	}
 }
 
-func makeJiraSubCommands(srv JiraCommand) []*cli.Command {
+func makeJiraSubCommands(srv Command) []*cli.Command {
 	return []*cli.Command{
 		{
 			Name:   "issues",
@@ -36,16 +38,16 @@ func makeJiraSubCommands(srv JiraCommand) []*cli.Command {
 	}
 }
 
-func (s *JiraCommand) parseArgs(_ *cli.Context) error {
+func (s *Command) parseArgs(_ *cli.Context) error {
 	err := s.LoadConfig("./config.toml")
 	if err != nil {
-		return err
+		return errors.Wrap(err, "Failed to load config")
 	}
 
 	return nil
 }
 
-func (s *JiraCommand) ShowIssuesAction(c *cli.Context) error {
+func (s *Command) ShowIssuesAction(c *cli.Context) error {
 	err := s.parseArgs(c)
 	if err != nil {
 		return err
@@ -54,7 +56,7 @@ func (s *JiraCommand) ShowIssuesAction(c *cli.Context) error {
 	return nil
 }
 
-func (s *JiraCommand) ShowBoardsAction(c *cli.Context) error {
+func (s *Command) ShowBoardsAction(c *cli.Context) error {
 	err := s.parseArgs(c)
 	if err != nil {
 		return err
