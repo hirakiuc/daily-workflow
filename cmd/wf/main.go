@@ -5,6 +5,8 @@ import (
 	"os"
 
 	"github.com/hirakiuc/daily-workflow/command"
+	"github.com/hirakiuc/daily-workflow/command/daily"
+	"github.com/hirakiuc/daily-workflow/command/jira"
 	cli "github.com/urfave/cli/v2"
 )
 
@@ -25,8 +27,8 @@ func main() {
 	iostream := command.NewIoStream()
 
 	app.Commands = []*cli.Command{
-		command.NewDailyCommand(iostream),
-		command.NewJiraCommand(iostream),
+		daily.NewCommand(iostream),
+		jira.NewCommand(iostream),
 	}
 
 	if err := app.Run(os.Args); err != nil {

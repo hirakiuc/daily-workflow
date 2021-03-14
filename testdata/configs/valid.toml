@@ -1,0 +1,9 @@
+[common]
+root = "~/path/to/tool"
+editor = "nvim"
+finder = "ag"
+finderOpts = "--vimgrep"
+chooser = "/usr/local/bin/peco"
+
+[daily]
+path = "daily"
