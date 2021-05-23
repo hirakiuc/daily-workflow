@@ -48,19 +48,9 @@ func (s *Command) parseArgs(_ *cli.Context) error {
 }
 
 func (s *Command) ShowIssuesAction(c *cli.Context) error {
-	err := s.parseArgs(c)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return s.parseArgs(c)
 }
 
 func (s *Command) ShowBoardsAction(c *cli.Context) error {
-	err := s.parseArgs(c)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return s.parseArgs(c)
 }

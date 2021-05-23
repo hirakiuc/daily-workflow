@@ -42,7 +42,12 @@ func (s *CmdService) ExecAndWait(name string, args ...string) error {
 		return fmt.Errorf("failed to execute command: %w", err)
 	}
 
-	return cmd.Wait()
+	err = cmd.Wait()
+	if err != nil {
+		return fmt.Errorf("failed to wait the result from command: %w", err)
+	}
+
+	return nil
 }
 
 func (s *CmdService) EditAndWait(fpath string, opts string) error {

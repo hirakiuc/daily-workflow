@@ -13,6 +13,7 @@ import (
 
 const JSTDiffSeconds = 9 * 60 * 60
 
+// ErrUnsupportedCase represents an un-expected case error.
 var ErrUnsupportedCase = errors.New("unsupported case: can't select multiple items")
 
 type Command struct {
@@ -128,27 +129,44 @@ func (s *Command) EditAction(c *cli.Context) error {
 	// Open vim with the target path.
 	cmd := service.NewCmdService(s.Conf)
 
-	return cmd.EditAndWait(fPath, "")
+	err = cmd.EditAndWait(fPath, "")
+	if err != nil {
+		return fmt.Errorf("failed to wait the command result: %w", err)
+	}
+
+	return nil
 }
 
 func (s *Command) findCandidates(_ *cli.Context, words []string) ([]string, error) {
 	fs := service.NewFsService(s.Conf.Common.Root)
 
 	if len(words) == 0 {
-		return fs.ListFiles(s.Conf.DailyPath())
+		lines, err := fs.ListFiles(s.Conf.DailyPath())
+		if err != nil {
+			return []string{}, fmt.Errorf("failed to show the file list: %w", err)
+		}
+
+		return lines, nil
 	}
 
-	return fs.FindFiles(
+	lines, err := fs.FindFiles(
 		s.Conf.Common.Finder,
 		s.Conf.Common.FinderOpts,
 		strings.Join(words, " "),
 	)
+	if err != nil {
+		return []string{}, fmt.Errorf("failed to show the file list: %w", err)
+	}
+
+	return lines, nil
 }
 
 const (
+	// CaseCandidateIsOnlyPath represents the case that the candidate is only path string.
 	CaseCandidateIsOnlyPath int = 1
-	CaseCandidateIsVimdiff  int = 3
-	OnlyOneItem             int = 1
+
+	// CaseCandidateIsVimdiff represents the case that the candidate is vimdiff.
+	CaseCandidateIsVimdiff int = 3
 )
 
 func (s *Command) chooseAndEdit(_ *cli.Context, candidates []string) error {
@@ -165,7 +183,7 @@ func (s *Command) chooseAndEdit(_ *cli.Context, candidates []string) error {
 
 	if len(results) == 0 {
 		return nil
-	} else if len(results) > OnlyOneItem {
+	} else if len(results) > 1 {
 		return fmt.Errorf("%w", ErrUnsupportedCase)
 	}
 
@@ -181,12 +199,16 @@ func (s *Command) chooseAndEdit(_ *cli.Context, candidates []string) error {
 		opts = fmt.Sprintf("+%s", row)
 	}
 
-	return srv.EditAndWait(target, opts)
+	err = srv.EditAndWait(target, opts)
+	if err != nil {
+		return fmt.Errorf("failed: %w", err)
+	}
+
+	return nil
 }
 
 func (s *Command) ListAction(c *cli.Context) error {
-	err := s.parseArgs(c)
-	if err != nil {
+	if err := s.parseArgs(c); err != nil {
 		return err
 	}
 
