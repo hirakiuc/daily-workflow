@@ -48,7 +48,12 @@ func LoadConfig(path string) (*Config, error) {
 
 func expandPath(path string) (string, error) {
 	if !strings.HasPrefix(path, "~") {
-		return filepath.Abs(path)
+		str, err := filepath.Abs(path)
+		if err != nil {
+			return "", fmt.Errorf("failed to get absolute path: %w", err)
+		}
+
+		return str, nil
 	}
 
 	user, err := user.Current()

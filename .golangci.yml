@@ -82,5 +82,9 @@ linters:
   disable:
     - dupl
     - exhaustivestruct
+    - maligned
+    - scopelint
+    - golint
+    - interfacer
   disable-all: false
   fast: false
