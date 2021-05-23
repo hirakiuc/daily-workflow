@@ -167,9 +167,6 @@ const (
 
 	// CaseCandidateIsVimdiff represents the case that the candidate is vimdiff.
 	CaseCandidateIsVimdiff int = 3
-
-	// OnlyOneItem represents that the target has only 1 item.
-	OnlyOneItem int = 1
 )
 
 func (s *Command) chooseAndEdit(_ *cli.Context, candidates []string) error {
